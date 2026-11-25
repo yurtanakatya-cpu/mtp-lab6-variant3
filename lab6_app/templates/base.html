@@ -17,6 +17,11 @@
             <a class="brand" href="{{ url_for('index') }}">МТП · Лабораторная №6</a>
             <div class="nav align-items-center">
                 <a class="nav-link" href="{{ url_for('about') }}">О проекте</a>
+                {% if signed_in() %}
+                <a class="nav-link" href="{{ url_for('auth.account') }}">Кабинет</a>
+                {% else %}
+                <a class="nav-link" href="{{ url_for('auth.login') }}">Вход</a>
+                {% endif %}
             </div>
         </nav>
     </header>
