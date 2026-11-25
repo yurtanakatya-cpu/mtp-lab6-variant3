@@ -5,7 +5,8 @@ from json import load
 from os import environ
 from pathlib import Path
 
-from flask import Flask, abort, render_template, request
+from flask import Flask, abort, redirect, render_template, request
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .auth import auth, csrf_token, signed_in
 
@@ -47,6 +48,18 @@ def create_app(test_config: dict | None = None) -> Flask:
             raise RuntimeError("LAB6_SECRET_KEY должен быть не короче 32 знаков.")
         app.secret_key = app.config["LAB6_SECRET_KEY"]
 
+    if production:
+        # Heroku передаёт исходную схему через один доверенный прокси.
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
+
+        @app.before_request
+        def require_https():
+            if request.is_secure or request.endpoint == "health":
+                return None
+            if request.method not in {"GET", "HEAD"}:
+                abort(400, description="Для отправки формы нужен HTTPS.")
+            return redirect(request.url.replace("http:", "https:", 1), 308)
+
     app.register_blueprint(auth)
     app.add_template_global(csrf_token)
     app.add_template_global(signed_in)
@@ -67,6 +80,11 @@ def create_app(test_config: dict | None = None) -> Flask:
         """Вернуть готовый HTML без обработки Jinja."""
         return app.send_static_file("about.html")
 
+    @app.get("/healthz")
+    def health():
+        """Вернуть простой ответ для проверки работы процесса."""
+        return {"status": "ok"}
+
     @app.after_request
     def secure_headers(response):
         """Ограничить источники ресурсов и встраивание страницы."""
@@ -76,6 +94,8 @@ def create_app(test_config: dict | None = None) -> Flask:
             "frame-ancestors 'none'"
         )
         response.headers["X-Content-Type-Options"] = "nosniff"
+        if production and request.is_secure:
+            response.headers["Strict-Transport-Security"] = "max-age=31536000"
         return response
 
     return app
