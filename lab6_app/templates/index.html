@@ -1,10 +1,52 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-lg-8">
+<div class="row mb-4">
+    <header class="col-lg-8">
         <h1 class="page-title display-5">Веб-программирование</h1>
-        <p class="lead">Задания варианта 3 по лабораторной работе №6.</p>
-    </div>
+        <p class="lead">Екатерина Юрченко · Группа 221341 · Вариант 3</p>
+    </header>
 </div>
+<section class="card rounded-3">
+    <div class="card-body p-3 p-md-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-end
+                    gap-3 mb-3">
+            <h2 class="h4 mb-0">Задания</h2>
+            <form method="get" action="{{ url_for('index') }}">
+                <label class="form-label" for="level">Сложность</label>
+                <div class="d-flex gap-2">
+                    <select class="form-select" name="level" id="level">
+                        <option value="">Все уровни</option>
+                        {% for value, label in levels.items() %}
+                        <option value="{{ value }}"{% if selected == value %} selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-outline-secondary" type="submit">Показать</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">№</th>
+                        <th scope="col">Задание</th>
+                        <th scope="col">Сложность</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for level, number, title in tasks %}
+                    <tr>
+                        <td>{{ number }}</td>
+                        <td>{{ title }}</td>
+                        <td>{{ levels[level] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
 {% endblock %}
