@@ -55,3 +55,47 @@ body.static-page {
     padding-top: 1rem;
     color: var(--muted);
 }
+
+.back-link {
+    color: var(--accent);
+    font-weight: 650;
+}
+
+body.lab-page {
+    min-height: 100vh;
+    background: var(--paper);
+    color: var(--ink);
+}
+
+.site-header {
+    border-bottom: 1px solid var(--line);
+    background: #fff;
+}
+
+.site-header .nav-link {
+    color: var(--accent);
+}
+
+.brand {
+    text-decoration: none;
+    color: var(--ink);
+    font-weight: 750;
+}
+
+.page-title {
+    font-family: Georgia, serif;
+    letter-spacing: -.03em;
+}
+
+.lab-page .btn-primary {
+    --bs-btn-bg: #235641;
+    --bs-btn-border-color: #235641;
+    --bs-btn-hover-bg: #174432;
+    --bs-btn-hover-border-color: #174432;
+    --bs-btn-active-bg: #163d2d;
+    --bs-btn-active-border-color: #163d2d;
+}
+
+.auth-panel {
+    max-width: 32rem;
+}
